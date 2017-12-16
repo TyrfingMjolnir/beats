@@ -39,7 +39,7 @@ https://github.com/gamegos/etcdbeat[etcdbeat]:: Reads stats from the Etcd v2 API
 https://github.com/christiangalsterer/execbeat[execbeat]:: Periodically executes shell commands and sends the standard output and standard error to
 Logstash or Elasticsearch.
 https://github.com/jarpy/factbeat[factbeat]:: Collects facts from https://puppetlabs.com/facter[Facter].
-https://github.com/TyrfingMjolnir/filemakerbeat[filemakerbeat]:: Reads log data from FileMaker 16 Server and ships this to Elasticsearch.
+https://github.com/TyrfingMjolnir/filemakerbeat[filemakerbeat]:: Reads log data from FileMaker 16 Server and ships these to Elasticsearch.
 https://github.com/FStelzer/flowbeat[flowbeat]:: Collects, parses, and indexes http://www.sflow.org/index.php[sflow] samples.
 https://github.com/GeneralElectric/GABeat[gabeat]:: Collects data from Google Analytics Realtime API.
 https://github.com/jlevesy/githubbeat[githubbeat]:: Easily monitors GitHub repository activity.
