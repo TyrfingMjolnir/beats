@@ -88,3 +88,4 @@ https://github.com/mrkschan/uwsgibeat[uwsgibeat]:: Reads stats from uWSGI.
 https://github.com/phenomenes/varnishlogbeat[varnishlogbeat]:: Reads log data from a Varnish instance and ships it to Elasticsearch.
 https://github.com/phenomenes/varnishstatbeat[varnishstatbeat]:: Reads stats data from a Varnish instance and ships it to Elasticsearch.
 https://github.com/eskibars/wmibeat[wmibeat]:: Uses WMI to grab your favorite, configurable Windows metrics.
+https://github.com/TyrfingMjolnir/filemakerbeat[filemakerbeat]:: Reads log data from FileMaker 16 Server and ships this to Elasticsearch.
