@@ -1,0 +1,47 @@
+{
+	"description": "Pipeline for parsing filemaker fmdapi logs",
+	"on_failure": [{
+		"set": {
+			"field": "error",
+			"value": "{{ _ingest.on_failure_message }}"
+		}
+	}],
+	"processors": [{
+			"grok": {
+				"field": "message",
+				"ignore_missing": true,
+				"pattern_definitions": {
+					"GREEDYMULTILINE": "(.|\n)*",
+					"TAB": "\t",
+					"TOMCAT_DATESTAMP": "20%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:?%{MINUTE}(?::?%{SECOND}) %{ISO8601_TIMEZONE}"
+				},
+				"patterns": [
+					"^%{TOMCAT_DATESTAMP:filemaker.fmdapi.logtime}%{TAB}%{WORD:filemaker.fmdapi.number}%{TAB}%{WORD:filemaker.fmdapi.status}%{TAB}%{IPORHOST:filemaker.fmdapi.hostname}%{TAB}%{WORD:filemaker.fmdapi.isrest}%{TAB}%{WORD:filemaker.fmdapi.httpmethod}%{TAB}%{GREEDYDATA:filemaker.fmdapi.endpoint}$"
+					
+
+				]
+}
+		},
+		{
+			"remove": {
+				"field": "messagez"
+			}
+		},
+		{
+  			  "geoip": {
+ 			     "field": "filemaker.fmdapi.ip",
+   			   "target_field": "filemaker.fmdapi.geoip"
+    }		},
+		{
+			"date": {
+				"field": "filemaker.fmdapi.logtime",
+				"formats": [
+					"MMM  d HH:mm:ss",
+					"MMM dd HH:mm:ss"
+				],
+				"ignore_failure": true,
+				"target_field": "@timestamp"
+			}
+		}
+	]
+}

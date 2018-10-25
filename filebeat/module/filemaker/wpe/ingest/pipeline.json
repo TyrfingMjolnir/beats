@@ -1,0 +1,47 @@
+{
+	"description": "Pipeline for parsing filemaker wpe logs",
+	"on_failure": [{
+		"set": {
+			"field": "error",
+			"value": "{{ _ingest.on_failure_message }}"
+		}
+	}],
+	"processors": [{
+			"grok": {
+				"field": "message",
+				"ignore_missing": true,
+				"pattern_definitions": {
+					"GREEDYMULTILINE": "(.|\n)*",
+					"TAB": "\t",
+					"TOMCAT_DATESTAMP": "20%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:?%{MINUTE}(?::?%{SECOND}) %{ISO8601_TIMEZONE}"
+				},
+				"patterns": [
+					"^%{TOMCAT_DATESTAMP:filemaker.wpe.logtime}%{TAB}%{IPORHOST:filemaker.wpe.hostname}%{TAB}%{WORD:filemaker.wpe.clientIPPort}%{TAB}%{WORD:filemaker.wpe.accountName}%{TAB}%{WORD:filemaker.wpe.moduleType}%{TAB}%{WORD:filemaker.wpe.severity}%{TAB}%{WORD:filemaker.wpe.filemakerErrorCode}%{TAB}%{WORD:filemaker.wpe.bytesReturned}%{TAB}%{GREEDYDATA:filemaker.wpe.url}$"
+					
+
+				]
+}
+		},
+		{
+			"remove": {
+				"field": "messagez"
+			}
+		},
+		{
+  			  "geoip": {
+ 			     "field": "filemaker.wpe.ip",
+   			   "target_field": "filemaker.wpe.geoip"
+    }		},
+		{
+			"date": {
+				"field": "filemaker.wpe.logtime",
+				"formats": [
+					"MMM  d HH:mm:ss",
+					"MMM dd HH:mm:ss"
+				],
+				"ignore_failure": true,
+				"target_field": "@timestamp"
+			}
+		}
+	]
+}

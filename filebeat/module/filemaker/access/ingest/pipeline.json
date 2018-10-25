@@ -1,0 +1,46 @@
+{
+	"description": "Pipeline for parsing filemaker access logs",
+	"on_failure": [{
+		"set": {
+			"field": "error",
+			"value": "{{ _ingest.on_failure_message }}"
+		}
+	}],
+	"processors": [{
+			"grok": {
+				"field": "message",
+				"ignore_missing": true,
+				"pattern_definitions": {
+					"GREEDYMULTILINE": "(.|\n)*",
+					"TAB": "\t",
+					"TOMCAT_DATESTAMP": "20%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:?%{MINUTE}(?::?%{SECOND}) %{ISO8601_TIMEZONE}"
+				},
+				"patterns": [
+					"^%{TOMCAT_DATESTAMP:filemaker.access.logtime}%{TAB}%{WORD:filemaker.access.loglevel}%{TAB}%{WORD:filemaker.access.number}%{TAB}%{IPORHOST:filemaker.access.hostname}%{TAB}%{GREEDYDATA:filemaker.access.statement}$"
+
+				]
+}
+		},
+		{
+			"remove": {
+				"field": "messagez"
+			}
+		},
+		{
+  			  "geoip": {
+ 			     "field": "filemaker.access.ip",
+   			   "target_field": "filemaker.access.geoip"
+    }		},
+		{
+			"date": {
+				"field": "filemaker.access.logtime",
+				"formats": [
+					"MMM  d HH:mm:ss",
+					"MMM dd HH:mm:ss"
+				],
+				"ignore_failure": true,
+				"target_field": "@timestamp"
+			}
+		}
+	]
+}

@@ -1,0 +1,41 @@
+{
+	"description": "Pipeline for parsing filemaker stats logs",
+	"on_failure": [{
+		"set": {
+			"field": "error",
+			"value": "{{ _ingest.on_failure_message }}"
+		}
+	}],
+	"processors": [{
+			"grok": {
+				"field": "message",
+				"ignore_missing": true,
+				"pattern_definitions": {
+					"GREEDYMULTILINE": "(.|\n)*",
+					"TAB": "\t",
+					"TOMCAT_DATESTAMP": "20%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:?%{MINUTE}(?::?%{SECOND}) %{ISO8601_TIMEZONE}"
+				},
+				"patterns": [
+					"^%{TOMCAT_DATESTAMP:filemaker.stats.logtime}%{TAB}%{NUMBER:filemaker.stats.neworkKBsecIn}%{TAB}%{NUMBER:filemaker.stats.neworkKBsecOut}%{TAB}%{NUMBER:filemaker.stats.diskKBsecRead}%{TAB}%{NUMBER:filemaker.stats.diskKBsecWritten}%{TAB}%{NUMBER:filemaker.stats.cacheHitPercent}%{TAB}%{NUMBER:filemaker.stats.cacheUnsavedPercent}%{TAB}%{NUMBER:filemaker.stats.proClients}%{TAB}%{NUMBER:filemaker.stats.openDatabases}%{TAB}%{NUMBER:filemaker.stats.xDBCClients}%{TAB}%{NUMBER:filemaker.stats.webDirectClients}%{TAB}%{NUMBER:filemaker.stats.customWebClients}%{TAB}%{NUMBER:filemaker.stats.remoteCallsSec}%{TAB}%{NUMBER:filemaker.stats.remoteCallsInProgress}%{TAB}%{NUMBER:filemaker.stats.elapsedTimeCall}%{TAB}%{NUMBER:filemaker.stats.waitTimeCall}%{TAB}%{NUMBER:filemaker.stats.ioTimeCall}%{TAB}%{NUMBER:filemaker.stats.goClients}$"
+				]
+}
+		},
+		{
+			"remove": {
+				"field": "messagez"
+			}
+		},
+		{
+			"date": {
+				"field": "filemaker.stats.logtime",
+				"formats": [
+					"MMM  d HH:mm:ss",
+					"MMM dd HH:mm:ss"
+				],
+				"ignore_failure": true,
+				"target_field": "@timestamp"
+			}
+		}
+	]
+}
+
